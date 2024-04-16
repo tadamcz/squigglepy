@@ -1,5 +1,7 @@
 import operator
 import math
+
+import make_distribution.client
 import numpy as np
 import scipy.stats
 
@@ -183,6 +185,25 @@ class DiscreteDistribution(OperableDistribution, ABC):
 class ContinuousDistribution(OperableDistribution, ABC):
     ...
 
+class MakeDistributionDistribution(ContinuousDistribution):
+    def __init__(self,
+                 api_endpoint: str,
+                 api_data: dict,
+                 api_client: make_distribution.client.SciPyClient):
+        super().__init__()
+        self.api_endpoint = api_endpoint
+        self.api_data = api_data
+        self.api_client = api_client
+        self.api_dist = self.api_client.post(self.api_endpoint, json=self.api_data)
+
+    def __str__(self):
+        return self.api_dist.__str__()
+
+def makedist(api_data: dict, api_endpoint: str, api_client: make_distribution.client.SciPyClient):
+    """
+    Initialize a distribution from the MakeDistribution API.
+    """
+    return MakeDistributionDistribution(api_endpoint, api_data, api_client)
 
 class CompositeDistribution(OperableDistribution):
     def __init__(self):

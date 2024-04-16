@@ -45,7 +45,7 @@ from .distributions import (
     TriangularDistribution,
     PERTDistribution,
     UniformDistribution,
-    const,
+    const, MakeDistributionDistribution,
 )
 
 _squigglepy_internal_sample_caches = {}
@@ -1108,6 +1108,9 @@ def sample(
 
             if is_dist(samples) or callable(samples):
                 samples = sample(samples, n=n)
+
+        elif isinstance(dist, MakeDistributionDistribution):
+            samples = dist.api_dist.rvs(size=n)
 
         else:
             raise ValueError("{} sampler not found".format(type(dist)))
